@@ -159,7 +159,12 @@ class FormFieldsTagLib implements GrailsApplicationAware {
 		if (hasBody(body)) {
 			model.value = body(model)
 		} else {
-			model.value = renderDefaultDisplay(model, attrs)
+			def template = formFieldsTemplateService.findTemplate(propertyAccessor, 'displayObject')
+            if (template) {
+                model.value = render(template: template.path, plugin: template.plugin, model: model + attrs)
+            } else {
+                model.value = renderDefaultDisplay(model, attrs)
+            }
 		}
 
 		out << renderForDisplay(propertyAccessor, model, attrs)
